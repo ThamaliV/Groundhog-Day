@@ -1,0 +1,117 @@
+---
+title: "Untitled"
+author: "Thamali Vidanage"
+date: "2024-02-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(tidytuesdayR)
+library(here)
+library(dplyr)
+library(ggplot2)
+library(sysfonts)
+library(showtext)
+```
+
+
+```{r}
+font_add_google("Alegreya Sans", "aleg")
+font_add_google("Oswald", "oswald")
+font_add_google("PT Sans Narrow", "pt")
+showtext_auto()
+
+```
+
+
+```{r}
+groundhogs <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-01-30/groundhogs.csv')
+predictions <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-01-30/predictions.csv')
+
+```
+
+```{r}
+merged_data <- merge(groundhogs,predictions,by="id")
+
+merged_data
+```
+
+```{r}
+
+filtered_data <-merged_data%>% 
+                filter(country== "Canada")%>%
+                group_by(region)
+filtered_data
+```
+
+
+
+
+```{r}
+
+filterdf <- predictions %>% filter(id %in% c(14)) %>% filter(year> 2016)
+
+filterdf
+```
+
+```{r}
+
+#plot_a <- plot(filterdf$year, as.numeric(filterdf$shadow), type = "l", col = "blue", xlab = "Year", ylab = "prediction", main = "Time Series Plot of Logical Data")
+
+#plot_a
+
+```
+
+```{r}
+#plot_1<- barplot(table(filterdf$shadow), col = c("blue", "red"), beside = TRUE, legend.text = TRUE, xlab = "Year", ylab = "Frequency", main = "Bar Plot of Logical Data by Year")
+
+#plot_1
+```
+
+
+```{r}
+a1 <- as.numeric(filterdf$shadow) 
+a1
+```
+
+```{r}
+plot_aa<- filterdf%>%
+  ggplot(aes(x=year,y = as.factor(filterdf$shadow),fill= shadow))+
+  geom_jitter(stat = "identity",position = "dodge")+
+  #facet_wrap(~year)+
+  scale_fill_manual(name = "Prediction", values = c("TRUE" = "blue", "FALSE" = "red")) +
+  labs(x = "Year", y = "Shadow", fill = "Prediction")
+  
+plot_aa
+```
+
+```{r}
+plot_aa <- ggplot(filterdf, aes(x = year, y = as.factor(shadow), color = factor(shadow))) +
+  geom_jitter(position=position_jitter(0), shape= 17, size= 4, stat = "identity") + 
+
+  #scale_shape_manual(values = c(16,17))+
+  #scale_color_manual(values = c("#00AFBB", "#E7B800"))+# Adjust position if needed
+  #scale_fill_manual(name = "Prediction", values = c("TRUE" = "blue", "FALSE" = "red")) +  # Specify colors for TRUE and FALSE
+  labs(x = "Year", y = "Shadow", fill = "Prediction")  # Labels for axes and legend
+
+print(plot_aa)
+```
+```{r}
+plot_b <- ggplot(filterdf, aes(x = year, y = as.factor(shadow), color = factor(shadow))) +
+  geom_point (size = 19) +  # Adjust position if needed
+  scale_fill_manual(name = "Prediction", values = c("TRUE" = "blue", "FALSE" = "red")) +  # Specify colors for TRUE and FALSE
+  labs(x = "Year", y = "Shadow", fill = "Prediction")  # Labels for axes and legend
+
+print(plot_aa)
+
+```
+
+
+
+
